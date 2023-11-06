@@ -19,3 +19,16 @@ You can also change default emoji for cases when you posting text without starin
 If you don't want to cross-post status to mastodon you can enable skip mastodon post settings. This one is by default disabled.
 
 ![](screenshot2.png)
+
+### Using
+
+You can use the ribbon icon by clicking on it, or open the command palette with `CTRL+P` (Windows) or a similar keyboard shortcut, depending on your operating system. Find for `Post to status log 🤣` action.
+
+- If text is selected, it will be posted to the status log.
+- If no text is selected, the entry (actual) document content is posted.
+
+I tested plugin on Android and (iOS is will be simmilar) and best with what I came out is add mentioned action above to quick action `settings > mobila > configure quick actions`
+
+### Others
+
+The icon I used is from [Font awesome](https://fontawesome.com/icons/face-grin-tears?f=classic&s=regular)
