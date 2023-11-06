@@ -1,5 +1,5 @@
 {
-	"name": "omg-lol-plugin",
+	"name": "omg-publish",
 	"version": "1.0.0",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
