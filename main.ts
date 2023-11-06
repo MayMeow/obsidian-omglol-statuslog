@@ -45,6 +45,7 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 		this.addCommand({
 			id: 'sample-editor-command',
 			name: 'Post to status log 🤣',
+			icon: 'face-grin-tears-regular',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				console.log(editor.getSelection());
 
