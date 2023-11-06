@@ -41,7 +41,7 @@ export default class MyPlugin extends Plugin {
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
 			id: 'sample-editor-command',
-			name: 'Sample editor command',
+			name: 'Post to status log 🤣',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				console.log(editor.getSelection());
 
@@ -105,6 +105,8 @@ export default class MyPlugin extends Plugin {
 	sendTextToAPI() {
 		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 		let selectedText = '';
+		let dataToPost = '';
+
 		if (activeView) {
 			const editor = activeView.editor;
 			if (editor.somethingSelected()) {
@@ -118,24 +120,62 @@ export default class MyPlugin extends Plugin {
 				selectedText = currentText;
 			}
 
+			dataToPost = this.getDataToPost(selectedText);
+			console.log('Data to post:', dataToPost);
+
 			fetch('https://api.omg.lol/address/' + this.settings.username + '/statuses/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer ' + this.settings.token
 				},
-				body: JSON.stringify({
-					"content": selectedText
-				}),
+				body: dataToPost
 			})
 			.then(response => response.json())
 			.then(data => {
 				console.log('Success:', data);
+				let responseText = '\n> 🦣 Discussion: ' + data.response.external_url + '\n> 😂 Posted On: ' +  data.response.url;
 
-				editor.replaceSelection('Discussion: ' + data.response.external_url + '\nPosted On: ' +  data.response.url);
+				if (editor.somethingSelected()) {
+					this.insertAfterLine(editor, responseText);
+				} else {
+					editor.replaceSelection(responseText);
+				}
+
 			})
 		}
 
+	}
+
+	// data to post
+	getDataToPost(selectedText: string)
+	{
+		selectedText = selectedText.trim();
+		const emojiRegex = /^(\p{Emoji}+)/u;
+		const isEmoji = emojiRegex.test(selectedText);
+
+		const emojis = selectedText.match(emojiRegex);
+
+		if (isEmoji && emojis != null) {
+			selectedText = selectedText.replace(emojiRegex, '');
+			selectedText = selectedText.trim();
+
+			return JSON.stringify({
+				"content": selectedText,
+				"emoji": emojis[0]
+			})
+		}
+
+		return JSON.stringify({
+			"content": selectedText
+		})
+	}
+
+	insertAfterLine(editor: Editor, textToInsert: string) {
+		const cursor = editor.getCursor();
+		const line = editor.getLine(cursor.line);
+		const pos = {line: cursor.line, ch: line.length};
+		editor.replaceRange(textToInsert, pos);
 	}
 
 	onunload() {
@@ -166,8 +206,6 @@ class SampleModal extends Modal {
 		contentEl.empty();
 	}
 }
-
-
 
 class SampleSettingTab extends PluginSettingTab {
 	plugin: MyPlugin;
