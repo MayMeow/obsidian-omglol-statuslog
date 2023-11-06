@@ -2,18 +2,22 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 
 // Remember to rename these classes and interfaces!
 
-interface MyPluginSettings {
+interface MayMeowOmgPublishSettings {
 	username: string;
 	token: string;
+	skip_mastodon_post: boolean;
+	default_emoji: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	username: 'default',
-	token: ''
+const DEFAULT_SETTINGS: MayMeowOmgPublishSettings = {
+	username: '',
+	token: '',
+	skip_mastodon_post: false,
+	default_emoji: '😀',
 }
 
 export default class MayMeowOmgPublishPlugin extends Plugin {
-	settings: MyPluginSettings;
+	settings: MayMeowOmgPublishSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -33,49 +37,23 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 		const statusBarItemEl = this.addStatusBarItem();
 		statusBarItemEl.setText('Status Bar Text');
 
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
+
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
-			id: 'sample-editor-command',
+			id: 'post-to-status-log',
 			name: 'Post to status log 🤣',
 			icon: 'face-grin-tears-regular',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				console.log(editor.getSelection());
 
-				this.sendTextToAPI();
 				// editor.replaceSelection('Sample Editor Command' + this.loadTextFromFile());
 				// editor.replaceSelection('https://omg.maymeow.lol/' + this.settings.username + '/' + this.settings.token + '/statuslog');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-sample-modal-complex',
-			name: 'Open sample modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
+				this.sendTextToAPI();			
 			}
 		});
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new MayMeowOmgPublishSettingTab(this.app, this));
 
 		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// Using this function will automatically remove the event listener when this plugin is disabled.
@@ -127,6 +105,8 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 			dataToPost = this.getDataToPost(selectedText);
 			console.log('Data to post:', dataToPost);
 
+			new Notice('😋 Publishing...');
+
 			fetch('https://api.omg.lol/address/' + this.settings.username + '/statuses/', {
 				method: 'POST',
 				headers: {
@@ -167,12 +147,15 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 
 			return JSON.stringify({
 				"content": selectedText,
-				"emoji": emojis[0]
+				"emoji": emojis[0],
+				"skip_mastodon_post": this.settings.skip_mastodon_post
 			})
 		}
 
 		return JSON.stringify({
-			"content": selectedText
+			"emoji": this.settings.default_emoji,
+			"content": selectedText,
+			"skip_mastodon_post": this.settings.skip_mastodon_post
 		})
 	}
 
@@ -196,23 +179,8 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 	}
 }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
 
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
-
-class SampleSettingTab extends PluginSettingTab {
+class MayMeowOmgPublishSettingTab extends PluginSettingTab {
 	plugin: MayMeowOmgPublishPlugin;
 
 	constructor(app: App, plugin: MayMeowOmgPublishPlugin) {
@@ -224,11 +192,11 @@ class SampleSettingTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
-		containerEl.createEl('h2', { text: 'Statuslog settings' });
+		containerEl.createEl('h2', { text: 'Omg.publish' });
 
 		new Setting(containerEl)
 			.setName('Username')
-			.setDesc('Your omg.lol username')
+			.setDesc('Your omg.lol username (address)')
 			.addText(text => text
 				.setPlaceholder('Enter your username')
 				.setValue(this.plugin.settings.username)
@@ -239,15 +207,41 @@ class SampleSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Password')
-			.setDesc('Your omg.lol password')
+			.setName('API Token')
+			.setDesc('Your omg.lol API Token')
 			.addText(text => text
-				.setPlaceholder('Enter your password')
+				.setPlaceholder('Enter your token')
 				.setValue(this.plugin.settings.token)
 				.onChange(async (value) => {
 					this.plugin.settings.token = value;
 					await this.plugin.saveSettings();
 					console.log('Writing token ...');
 				}).inputEl.type = 'password');
+
+		new Setting(containerEl)
+			.setName('Default Emoji')
+			.setDesc('If your text does not contain emoni on the start this will be used as instead.')
+			.addText(text => text
+				.setPlaceholder('Enter your emoji')
+				.setValue(this.plugin.settings.default_emoji)
+				.onChange(async (value) => {
+					this.plugin.settings.default_emoji = value;
+					await this.plugin.saveSettings();
+					console.log('Writing emoji ...');
+				}));
+
+		new Setting(containerEl)
+			.setName('Skip Mastodon post?')
+			.setDesc('If it is enabled, your post will not be posted to Mastodon.')
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.skip_mastodon_post)
+					.onChange((value) => {
+						this.plugin.settings.skip_mastodon_post = value;
+						this.plugin.saveSettings();
+					})
+				);
+
+		containerEl.createEl('legend', { text: 'All settings are saved automatically.' });
 	}
 }
