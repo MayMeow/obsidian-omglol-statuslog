@@ -5,11 +5,15 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 interface MayMeowOmgPublishSettings {
 	username: string;
 	token: string;
+	skip_mastodon_post: boolean;
+	default_emoji: string;
 }
 
 const DEFAULT_SETTINGS: MayMeowOmgPublishSettings = {
 	username: '',
-	token: ''
+	token: '',
+	skip_mastodon_post: false,
+	default_emoji: '😀',
 }
 
 export default class MayMeowOmgPublishPlugin extends Plugin {
@@ -143,12 +147,15 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 
 			return JSON.stringify({
 				"content": selectedText,
-				"emoji": emojis[0]
+				"emoji": emojis[0],
+				"skip_mastodon_post": this.settings.skip_mastodon_post
 			})
 		}
 
 		return JSON.stringify({
-			"content": selectedText
+			"emoji": this.settings.default_emoji,
+			"content": selectedText,
+			"skip_mastodon_post": this.settings.skip_mastodon_post
 		})
 	}
 
@@ -185,11 +192,11 @@ class MayMeowOmgPublishSettingTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
-		containerEl.createEl('h2', { text: 'Statuslog settings' });
+		containerEl.createEl('h2', { text: 'Omg.publish' });
 
 		new Setting(containerEl)
 			.setName('Username')
-			.setDesc('Your omg.lol username')
+			.setDesc('Your omg.lol username (address)')
 			.addText(text => text
 				.setPlaceholder('Enter your username')
 				.setValue(this.plugin.settings.username)
@@ -200,15 +207,41 @@ class MayMeowOmgPublishSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Password')
-			.setDesc('Your omg.lol password')
+			.setName('API Token')
+			.setDesc('Your omg.lol API Token')
 			.addText(text => text
-				.setPlaceholder('Enter your password')
+				.setPlaceholder('Enter your token')
 				.setValue(this.plugin.settings.token)
 				.onChange(async (value) => {
 					this.plugin.settings.token = value;
 					await this.plugin.saveSettings();
 					console.log('Writing token ...');
 				}).inputEl.type = 'password');
+
+		new Setting(containerEl)
+			.setName('Default Emoji')
+			.setDesc('If your text does not contain emoni on the start this will be used as instead.')
+			.addText(text => text
+				.setPlaceholder('Enter your emoji')
+				.setValue(this.plugin.settings.default_emoji)
+				.onChange(async (value) => {
+					this.plugin.settings.default_emoji = value;
+					await this.plugin.saveSettings();
+					console.log('Writing emoji ...');
+				}));
+
+		new Setting(containerEl)
+			.setName('Skip Mastodon post?')
+			.setDesc('If it is enabled, your post will not be posted to Mastodon.')
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.skip_mastodon_post)
+					.onChange((value) => {
+						this.plugin.settings.skip_mastodon_post = value;
+						this.plugin.saveSettings();
+					})
+				);
+
+		containerEl.createEl('legend', { text: 'All settings are saved automatically.' });
 	}
 }
