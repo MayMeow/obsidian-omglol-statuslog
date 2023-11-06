@@ -1,11 +1,11 @@
 {
-	"id": "omglol-statuslog-publish-plugin",
-	"name": "omg.publish",
+	"id": "omglol-statuslog-publish",
+	"name": "Omg.publish",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Obsidian plugin to post selected text to OMG.lol statuslog",
 	"author": "May Meow",
 	"authorUrl": "https://maymeow.com/",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"fundingUrl": "https://ko-fi.com/D1D5DMOTA",
 	"isDesktopOnly": false
 }

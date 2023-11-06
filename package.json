@@ -1,7 +1,7 @@
 {
-	"name": "omg-publish",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"name": "omglol-statuslog-publish",
+	"version": "1.0.1",
+	"description": "Plugin to post selected text to OMG.lol statuslog for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
