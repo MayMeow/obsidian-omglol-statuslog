@@ -3,11 +3,13 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
-	mySetting: string;
+	username: string;
+	token: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	username: 'default',
+	token: ''
 }
 
 export default class MyPlugin extends Plugin {
@@ -42,7 +44,10 @@ export default class MyPlugin extends Plugin {
 			name: 'Sample editor command',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
+
+				this.sendTextToAPI();
+				// editor.replaceSelection('Sample Editor Command' + this.loadTextFromFile());
+				// editor.replaceSelection('https://omg.maymeow.lol/' + this.settings.username + '/' + this.settings.token + '/statuslog');
 			}
 		});
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
@@ -78,6 +83,61 @@ export default class MyPlugin extends Plugin {
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
+	// load content from current file
+	loadTextFromFile() {
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (activeView) {
+			const editor = activeView.editor;
+			if (editor.somethingSelected()) {
+			const selectedText = editor.getSelection();
+			console.log('Selected text:', selectedText);
+			// Do something with the selected text
+			return selectedText;
+			} else {
+				const currentText = editor.getValue();
+				console.log('Current text:', currentText);
+				// Do something with the current text
+				return currentText;
+			}
+		}
+	}
+
+	sendTextToAPI() {
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		let selectedText = '';
+		if (activeView) {
+			const editor = activeView.editor;
+			if (editor.somethingSelected()) {
+			selectedText = editor.getSelection();
+			console.log('Selected text:', selectedText);
+			// Do something with the selected text
+			} else {
+				const currentText = editor.getValue();
+				console.log('Current text:', currentText);
+				// Do something with the current text
+				selectedText = currentText;
+			}
+
+			fetch('https://api.omg.lol/address/' + this.settings.username + '/statuses/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer ' + this.settings.token
+				},
+				body: JSON.stringify({
+					"content": selectedText
+				}),
+			})
+			.then(response => response.json())
+			.then(data => {
+				console.log('Success:', data);
+
+				editor.replaceSelection('Discussion: ' + data.response.external_url + '\nPosted On: ' +  data.response.url);
+			})
+		}
+
+	}
+
 	onunload() {
 
 	}
@@ -107,6 +167,8 @@ class SampleModal extends Modal {
 	}
 }
 
+
+
 class SampleSettingTab extends PluginSettingTab {
 	plugin: MyPlugin;
 
@@ -119,16 +181,30 @@ class SampleSettingTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
+		containerEl.createEl('h2', { text: 'Statuslog settings' });
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
+			.setName('Username')
+			.setDesc('Your omg.lol username')
 			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+				.setPlaceholder('Enter your username')
+				.setValue(this.plugin.settings.username)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.username = value;
 					await this.plugin.saveSettings();
+					console.log('Writing username ...');
 				}));
+
+		new Setting(containerEl)
+			.setName('Password')
+			.setDesc('Your omg.lol password')
+			.addText(text => text
+				.setPlaceholder('Enter your password')
+				.setValue(this.plugin.settings.token)
+				.onChange(async (value) => {
+					this.plugin.settings.token = value;
+					await this.plugin.saveSettings();
+					console.log('Writing token ...');
+				}).inputEl.type = 'password');
 	}
 }
