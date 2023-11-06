@@ -1,4 +1,4 @@
-# Obsidian Sample Plugin
+# Obsidian OMG.lol publish plugin
 
 This is a sample plugin for Obsidian (https://obsidian.md).
 
