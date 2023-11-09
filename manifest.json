@@ -1,7 +1,7 @@
 {
 	"id": "omglol-statuslog-publish",
 	"name": "Omg.publish",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"minAppVersion": "0.15.0",
 	"description": "Obsidian plugin to post selected text to OMG.lol statuslog",
 	"author": "May Meow",
