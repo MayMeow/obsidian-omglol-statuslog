@@ -3,7 +3,7 @@
 	"name": "Omg.publish",
 	"version": "1.0.2",
 	"minAppVersion": "0.15.0",
-	"description": "Obsidian plugin to post selected text to OMG.lol statuslog",
+	"description": "Publish selected text to omg.lol service.",
 	"author": "May Meow",
 	"authorUrl": "https://maymeow.com/",
 	"fundingUrl": "https://ko-fi.com/D1D5DMOTA",
