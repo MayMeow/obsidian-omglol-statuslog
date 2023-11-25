@@ -211,15 +211,14 @@ class MayMeowOmgPublishSettingTab extends PluginSettingTab {
 		new Setting(this.containerEl)
             .setName('Sponsor')
             .setDesc('Enjoying this plugin? 💜 Support me on kofi! 😊☕')
-            .addButton(button =>
-				button.buttonEl.createEl(
-					'a',
-					{
-						text: '☕ Buy me a coffee', //put image here
-						href: 'https://ko-fi.com/D1D5DMOTA',
-					}
-				)
-
-            )
+            .addButton(button => {
+				button
+					.setButtonText('☕ Support me on Ko-fi!')
+					.onClick(() => window.open('https://ko-fi.com/D1D5DMOTA', '_blank'))
+					.buttonEl.style.backgroundColor = '#FF5E5B'
+				button.buttonEl.style.color = '#ffffff';
+				button.buttonEl.style.fontWeight = '600';
+				button.buttonEl.style.fontFamily = 'sans-serif';
+			});
 	}
 }
