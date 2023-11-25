@@ -1,16 +1,16 @@
-# Obsidian OMG.lol publish plugin
+# omg.publish
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D5DMOTA)
 
-Plugin will update document after successful sending with links to external source (e.g. Mastodon instance) when is posting to mastodon enabled and link to status on statuslog.
+Omg.publish is a plugin for [Obsidian](https://obsidian.md/) that allows you post notes to [omg.lol](https://omg.lol) services like statuslog or weblog (planned).
 
 ![](screenshot1.png)
 
-### Installation (In progress)
+## Installation (In progress)
 
 You will need to enable obsidian community plugins in `settings > community plugins` then go to browse and find `omg.publish`
 
-### Plugin Settings
+## Plugin Settings
 
 You will need your username and API token from https://home.omg.lol/account (scroll down to bottom). 
 
@@ -20,15 +20,10 @@ If you don't want to cross-post status to mastodon you can enable skip mastodon 
 
 ![](screenshot2.png)
 
-### Using
+## Publishing text to statuslog
 
-You can use the ribbon icon by clicking on it, or open the command palette with `CTRL+P` (Windows) or a similar keyboard shortcut, depending on your operating system. Find for `Post to status log 🤣` action.
+Select any text you want to post to statuslog and open the command palette with `CTRL+P` (Windows) or a similar keyboard shortcut, depending on your operating system. Find for `Post to status log` action.
 
-- If text is selected, it will be posted to the status log.
-- If no text is selected, the entry (actual) document content is posted.
-
-I tested plugin on Android and (iOS is will be simmilar) and best with what I came out is add mentioned action above to quick action `settings > mobila > configure quick actions`
-
-### Others
+## Others
 
 The icon I used is from [Font awesome](https://fontawesome.com/icons/face-grin-tears?f=classic&s=regular)
