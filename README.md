@@ -27,3 +27,5 @@ Select any text you want to post to statuslog and open the command palette with 
 ## Others
 
 The icon I used is from [Font awesome](https://fontawesome.com/icons/face-grin-tears?f=classic&s=regular)
+
+This is a community plugin and is not affiliated with Obsidian or omg.lol.
