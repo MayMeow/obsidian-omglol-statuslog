@@ -1,7 +1,7 @@
 {
 	"id": "omglol-statuslog-publish",
 	"name": "Omg.publish",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"minAppVersion": "0.15.0",
 	"description": "Publish selected text to omg.lol service.",
 	"author": "May Meow",
