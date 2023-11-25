@@ -212,7 +212,14 @@ class MayMeowOmgPublishSettingTab extends PluginSettingTab {
             .setName('Sponsor')
             .setDesc('Enjoying this plugin? 💜 Support me on kofi! 😊☕')
             .addButton(button =>
-                button.buttonEl.outerHTML = '<a href="https://ko-fi.com/D1D5DMOTA" target="_blank"><img height="36" style="border:0px;height:36px;" src="https://storage.ko-fi.com/cdn/kofi3.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com" /></a>'
+				button.buttonEl.createEl(
+					'a',
+					{
+						text: '☕ Buy me a coffee', //put image here
+						href: 'https://ko-fi.com/D1D5DMOTA',
+					}
+				)
+
             )
 	}
 }
