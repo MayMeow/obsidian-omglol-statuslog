@@ -52,15 +52,6 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new MayMeowOmgPublishSettingTab(this.app, this));
-
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	// Send text to API
@@ -74,15 +65,17 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 			console.log('Data to post:', dataToPost);
 
 			new Notice('😋 Publishing...');
-			fetch('https://api.omg.lol/address/' + this.settings.username + '/statuses/', {
+
+			requestUrl({
+				url: 'https://api.omg.lol/address/' + this.settings.username + '/statuses/',
 				method: 'POST',
+				body: dataToPost,
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer ' + this.settings.token
-				},
-				body: dataToPost
+				}
 			})
-			.then(response => response.json())
+			.then(response => response.json)
 			.then(data => {
 				console.log('Success:', data);
 				let responseText = '\n>🦣 Discussion: ' + data.response.external_url + '\n>😂 Posted On: ' +  data.response.url;
@@ -91,7 +84,10 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 				this.insertAfterLine(editor, responseText);
 
 				new Notice('🎉 Published!');
-			})
+			}).catch((error) =>  {
+				console.error('Error:', error);
+				new Notice('🤔 Something went wrong!');
+			});
 		} else {
 			new Notice('😋 Nothing selected!');
 		}
