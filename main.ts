@@ -1,6 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, addIcon } from 'obsidian';
-
-// Remember to rename these classes and interfaces!
+import { App, ButtonComponent, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, addIcon, requestUrl } from 'obsidian';
 
 interface MayMeowOmgPublishSettings {
 	username: string;
