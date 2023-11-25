@@ -30,7 +30,7 @@ export default class MayMeowOmgPublishPlugin extends Plugin {
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
 			id: 'post-to-status-log',
-			name: 'Post to status log 🤣',
+			name: 'Post to status log',
 			icon: 'face-grin-tears-regular',
 
 			// allow exectuion only when text is selected
