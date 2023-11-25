@@ -154,7 +154,6 @@ class MayMeowOmgPublishSettingTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
-		containerEl.createEl('h2', { text: 'Omg.publish' });
 
 		new Setting(containerEl)
 			.setName('Username')
